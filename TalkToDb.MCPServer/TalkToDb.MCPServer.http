@@ -1,0 +1,6 @@
+@TalkToDb.MCPServer_HostAddress = http://localhost:5161
+
+GET {{TalkToDb.MCPServer_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
