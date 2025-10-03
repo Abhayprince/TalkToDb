@@ -33,8 +33,15 @@ public static class AppEndpoints
            - ""Grid"" → tabular result (result MUST be { ""columns"": string[], ""rows"": object[] })
 
         3. `message` → short, user-friendly explanation for UI display.
+           - If `resultType` = ""Scalar"", the `message` MUST explicitly include the scalar value.
+             Example: if result=4200 and query was ""How much we spent in 2025?"", message should be:
+             ""You have spent 4200 in 2025.""
+
         4. `errorMessage` → technical description for debugging.
-        5. On schema missing or unknown tables/columns: set isSuccess=false, sqlQuery=null, result=null, resultType=""None"", errorMessage with details, message user-friendly.
+
+        5. On schema missing or unknown tables/columns:
+           - Return: { ""sqlQuery"": null, ""errorMessage"": ""Schema information missing."", ""isSuccess"": false, ""result"": null, ""message"": ""Schema information is missing."", ""resultType"": ""None"" }
+
     ";
     public static IEndpointRouteBuilder MapAppEndpoints(this IEndpointRouteBuilder app, McpClient mcpClient)
     {
