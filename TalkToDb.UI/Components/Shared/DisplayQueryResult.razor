@@ -4,7 +4,7 @@
 @if(Message.ResultType == nameof(QueryResultType.Grid))
 {
     <div class="table-responsive">
-        <table class="table-striped table-hover table">
+        <table class="table-striped table-hover table-success table-sm small table">
             <thead>
                 <tr>
                 @foreach (var columnName in _gridData.Columns)
@@ -29,7 +29,21 @@
 }
 else if(Message.ResultType == nameof(QueryResultType.List))
 {
-    
+    <div class="table-responsive">
+            <table class="table-striped table-hover table-success table-sm small table">               
+                <tbody>
+                    @foreach (var row in _listData)
+                    {
+                            <tr>
+                                @foreach (var item in row.Values)
+                                {
+                                        <td>@(item ?? "")</td>
+                                }
+                            </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
 }
 @code{
 

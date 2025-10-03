@@ -1,6 +1,6 @@
 ﻿/*#if (SampleContent)*/
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 a, .btn-link {
@@ -85,4 +85,32 @@ h1:focus {
     .flex-column, .navbar-brand {
         padding-left: env(safe-area-inset-left);
     }
+}
+
+
+/* For WebKit browsers (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+    width: 10px; /* vertical scrollbar width */
+    height: 10px; /* horizontal scrollbar height */
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1; /* track (background) color */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #6a11cb, #2575fc);
+    border-radius: 10px;
+    border: 2px solid #f1f1f1; /* adds spacing inside */
+}
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #5b0ebd, #1e63d6);
+    }
+
+/* For Firefox */
+* {
+    scrollbar-width: thin; /* auto | thin | none */
+    scrollbar-color: #6a11cb #f1f1f1; /* thumb color | track color */
 }
