@@ -1,5 +1,104 @@
 ﻿@page "/"
+@using System.Text.Json
+@using TalkToDb.Shared
 
-<h1>Hello, world!</h1>
+@inject IApi Api
 
-Welcome to your new app.
+<div class="bg-info container" style="--bs-bg-opacity: 0.15;">
+    <div class="row d-flex flex-column vh-100 gap-3 py-3">
+        <div class="col-12 flex-grow-1" style="overflow-y: auto">
+            @foreach (var message in _messages)
+            {
+                var chatMessageClass = message.FromUser 
+                                        ? "bg-warning justify-content-end ms-auto" 
+                                        : "bg-success text-white justify-content-start me-auto";
+
+                <div class="d-flex mb-3">
+                    <div class="@chatMessageClass px-3 py-1" style="max-width: 80%">
+                        @message.Message
+                        @if (!message.FromUser)
+                        {
+                            <TalkToDb.UI.Components.Shared.DisplayQueryResult Message="message" />
+                        }
+                    </div>
+                </div>
+            }
+
+            @if (_isFetching)
+            {
+                <div class="d-flex mb-3">
+                    <div class="justify-content-start me-auto px-3 py-1 text-white" style="max-width: 80%">
+                        <div class="spinner-grow spinner-grow-sm text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="spinner-grow spinner-grow-sm text-secondary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="spinner-grow spinner-grow-sm text-success" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="spinner-grow spinner-grow-sm text-danger" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="spinner-grow spinner-grow-sm text-warning" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="spinner-grow spinner-grow-sm text-info" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="spinner-grow spinner-grow-sm text-light" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="spinner-grow spinner-grow-sm text-dark" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+                
+            }
+        
+        </div>
+        <div class="col-12 d-flex align-items-center gap-1">
+            <input type="text" @bind="_message" class="form-control" placeholder="Ask anything to the database" />
+            <button type="button" class="btn btn-info" @onclick="HandleAskAsync">Ask</button>
+        </div>
+    </div>
+</div>
+
+@code{
+    private List<QueryResult> _messages = [];
+
+    private bool _isFetching;
+
+    private string _message = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        //_queryResult = await Api.AskAsync("how many employees we have?");
+    }
+
+    private async Task HandleAskAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_message))
+            return;
+
+        var userMessage = new QueryResult
+            {
+                FromUser = true,
+                Message = _message
+            };
+
+        _messages.Add(userMessage);
+
+        _message = "";
+        _isFetching = true;
+        QueryResult apiMessage = await Api.AskAsync(userMessage.Message);
+
+        _isFetching = false;
+
+        _messages.Add(apiMessage);
+    }
+}
+@* // ValueKind = Array : "[{"Id":1,"Name":"Petrol"},{"Id":2,"Name":"Diesel"},{"Id":3,"Name":"CNG"},{"Id":4,"Name":"Test"}]"
+
+//ValueKind = Object : "{"columns":["Id","Date","ExpenseHead","Description","Amount"],"rows":[{"Id":2,"Date":"2024-12-02T00:00:00","ExpenseHead":"Electricity Bills","Description":null,"Amount":2590.00},{"Id":3,"Date":"2024-12-04T00:00:00","ExpenseHead":"Electricity Bills","Description":null,"Amount":1500.00},{"Id":4,"Date":"2024-12-04T00:00:00","ExpenseHead":"Maintenance","Description":"Some test Some test ","Amount":7500.00},{"Id":5,"Date":"2024-12-04T00:00:00","ExpenseHead":"Miscellaneous","Description":null,"Amount":1825.00},{"Id":6,"Date":"2024-12-06T00:00:00","ExpenseHead":"Maintenance","Description":null,"Amount":5000.00},{"Id":7,"Date":"2025-01-17T00:00:00","ExpenseHead":"Electricity Bills","Description":null,"Amount":1500.00},{"Id":8,"Date":"2025-01-15T00:00:00","ExpenseHead":"Maintenance","Description":null,"Amount":58200.00},{"Id":9,"Date":"2025-01-10T00:00:00","ExpenseHead":"Transportation Costs","Description":null,"Amount":34500.00},{"Id":10,"Date":"2025-01-15T00:00:00","ExpenseHead":"Fuel Purchase"... *@

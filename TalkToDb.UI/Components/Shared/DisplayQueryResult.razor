@@ -1,0 +1,70 @@
+﻿@using System.Text.Json
+@using TalkToDb.Shared
+
+@if(Message.ResultType == nameof(QueryResultType.Grid))
+{
+    <div class="table-responsive">
+        <table class="table-striped table-hover table">
+            <thead>
+                <tr>
+                @foreach (var columnName in _gridData.Columns)
+                    {
+                        <th>@columnName</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in _gridData.Rows)
+                {
+                    <tr>
+                        @foreach (var item in row.Values)
+                        {
+                            <td>@(item ?? "")</td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else if(Message.ResultType == nameof(QueryResultType.List))
+{
+    
+}
+@code{
+
+    [Parameter, EditorRequired]
+    public required QueryResult Message { get; set; }
+
+    private GridDto? _gridData;
+    private List<Dictionary<string, object?>>? _listData;
+
+    protected override void OnInitialized()
+    {
+        if (Message.IsSuccess)
+        {
+            switch (Message.ResultType)
+            {
+                case nameof(QueryResultType.List):
+                    HandleList();
+                    break;
+                case nameof(QueryResultType.Grid):
+                    HandleGrid();
+                    break;
+                default:
+                    //HandleMessage();
+                    break;
+            }
+        }
+    }
+    private void HandleGrid()
+    {
+        var result = Message.Result.ToString();
+        _gridData = JsonSerializer.Deserialize<GridDto>(result, Utils.JsonSerializerOptions);
+    }
+    private void HandleList()
+    {
+        var result = Message.Result.ToString();
+        _listData = JsonSerializer.Deserialize<List<Dictionary<string, object?>>>(result, Utils.JsonSerializerOptions);
+    }
+}

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Refit;
 
 namespace TalkToDb.UI;
 public static class MauiProgram
@@ -19,6 +20,11 @@ public static class MauiProgram
 		builder.Services.AddBlazorWebViewDeveloperTools();
 		builder.Logging.AddDebug();
 #endif
+
+        const string ApiBaseUrl = "http://localhost:5103";
+
+        builder.Services.AddRefitClient<IApi>()
+                        .ConfigureHttpClient(httpClient => httpClient.BaseAddress = new Uri(ApiBaseUrl));
 
         return builder.Build();
     }

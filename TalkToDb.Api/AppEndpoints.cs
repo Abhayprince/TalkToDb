@@ -14,13 +14,13 @@ public static class AppEndpoints
 - Always return a strict JSON object (no Markdown, no code fences, no extra text).
 - JSON must have exactly these fields:
   - sqlQuery (string or null)
-  - isGridResult (boolean)
   - errorMessage (string or null)
   - isSuccess (boolean)
   - result (null, scalar, array, or object)
   - message (string or null)
   - resultType (string: ""None"", ""Scalar"", ""List"", or ""Grid"")
 - Always put any query output inside ""result"". Do not create extra keys like totalExpense, employeeList, values, etc.
+- if resultType is ""Grid"" the result must be an object with exact two properties ""columns"" and ""rows""
 - The ""message"" must be a short user-friendly explanation of the result, suitable for direct UI display. 
   Examples:
     - If the result is a single value: ""Total units sold so far: 42""
@@ -64,10 +64,7 @@ public static class AppEndpoints
             {
                 try
                 {
-                    queryResult = JsonSerializer.Deserialize<QueryResult>(result.Text, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    }) 
+                    queryResult = JsonSerializer.Deserialize<QueryResult>(result.Text, Utils.JsonSerializerOptions) 
                     ?? new()
                     {
                         IsSuccess = false,
